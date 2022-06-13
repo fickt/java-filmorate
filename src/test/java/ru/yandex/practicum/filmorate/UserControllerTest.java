@@ -39,7 +39,7 @@ public class UserControllerTest {
         user.setLogin("login");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users/newuser")
+        int responseStatus = this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
@@ -54,7 +54,7 @@ public class UserControllerTest {
         user.setLogin("login");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users/newuser")
+        int responseStatus = this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
@@ -70,7 +70,7 @@ public class UserControllerTest {
         user.setLogin("lo gin");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users/newuser")
+        int responseStatus = this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
@@ -88,11 +88,11 @@ public class UserControllerTest {
 
         String userAsJson = json.toJson(user);
 
-        this.mvc.perform(post("/users/newuser")
+        this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userAsJson));
 
-        this.mvc.perform(get("/users/allusers"))
+        this.mvc.perform(get("/users")) //allusers
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("login")));
     }
 
@@ -107,7 +107,7 @@ public class UserControllerTest {
 
         String userAsJson = json.toJson(user);
 
-       int status = this.mvc.perform(post("/users/newuser")
+       int status = this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userAsJson)).andReturn().getResponse().getStatus();
 
@@ -125,7 +125,7 @@ public class UserControllerTest {
 
         String userAsJson = json.toJson(user);
 System.out.println(userAsJson);
-        int status = this.mvc.perform(post("/users/newuser")
+        int status = this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userAsJson)).andReturn().getResponse().getStatus();
 

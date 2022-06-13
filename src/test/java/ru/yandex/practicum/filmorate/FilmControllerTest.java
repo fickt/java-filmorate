@@ -35,7 +35,7 @@ public class FilmControllerTest {
         film.setDuration(Duration.of(100, ChronoUnit.MINUTES));
         film.setDescription("description of film");
 
-        int responseStatus = this.mvc.perform(post("/films/add")
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -53,7 +53,7 @@ public class FilmControllerTest {
                 "otherwise I will have to work on the program logic over and over again and there are no " +
                 "appropriate words to find to describe how strong I dont want to do this............................" +
                 ".................................................................................................");
-        int responseStatus = this.mvc.perform(post("/films/add")
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -69,7 +69,7 @@ public class FilmControllerTest {
         film.setDuration(Duration.of(100, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films/add")
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -85,7 +85,7 @@ public class FilmControllerTest {
         film.setDuration(Duration.of(-100, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films/add")
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -101,7 +101,7 @@ public class FilmControllerTest {
         film.setDuration(Duration.of(200, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films/add")
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 

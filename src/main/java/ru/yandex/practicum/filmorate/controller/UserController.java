@@ -19,7 +19,7 @@ public class UserController {
     private UserStorage userStorage = new UserStorage();
     private int userIdGenerator = 0;
     private Logger userControllerLogger = Logger.getLogger("userControllerLogger");
-    @PostMapping("/newuser")
+    @PostMapping() //newuser
     public User createNewUser(@RequestBody User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@") ||
                 user.getLogin().isBlank() ||
@@ -27,7 +27,7 @@ public class UserController {
             userControllerLogger.log(Level.WARNING, "ValidationException /newuser");
             throw new ValidationException("Ошибка валидации /user/newuser");
         } else {
-            if (user.getName().isBlank()) {
+            if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
             userStorage.addUser(userIdGenerator, user);
@@ -37,7 +37,7 @@ public class UserController {
         return user;
     }
 
-    @PutMapping("/updateuser")
+    @PutMapping() //updateuser
     public User updateUser(@RequestBody User user) {
         if (userStorage.containsUser(user.getId())) {
             userStorage.addUser(user.getId(), user);
@@ -49,7 +49,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/allusers")
+    @GetMapping() //allusers
     @ResponseBody
     public ResponseEntity getAllUsers() {
         userControllerLogger.log(Level.INFO, " /allusers");

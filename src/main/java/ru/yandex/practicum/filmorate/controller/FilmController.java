@@ -20,7 +20,7 @@ public class FilmController {
     private int filmIdGenerator = 0;
     private Logger filmControllerLogger = Logger.getLogger("filmControllerLogger");
 
-    @PostMapping("/add")
+    @PostMapping() //add
     public Film addFilm(@RequestBody Film film) {
         if (film.getName() == null || film.getName().isBlank() || film.getDescription().length() >= 200 ||
                 film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))
@@ -37,7 +37,7 @@ public class FilmController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping() //update
     public Film updateFilm(@RequestBody Film film) {
         if (filmStorage.containsFilm(film.getId())) {
             filmStorage.addFilm(film.getId(), film);
@@ -50,7 +50,7 @@ public class FilmController {
     }
 
     @ResponseBody
-    @GetMapping("/allfilms")
+    @GetMapping() //allfilms
     public ResponseEntity getAllFilms() {
         filmControllerLogger.log(Level.INFO, " /allfilms");
         return new ResponseEntity(filmStorage.getAllFilms().values(), HttpStatus.OK);
