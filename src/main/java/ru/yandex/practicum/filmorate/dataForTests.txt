@@ -1,0 +1,3 @@
+{"id":0,"email":"login@mail.ru","login":"login","name":"name","birthday":"12-01-2001"}
+
+{"id":0,"name":"film name","description":"description","releaseDate":"03-12-2002","durationInLong":200,"duration":"PT3M20S","personsLikedFilm":[],"amountOfLikes":0}

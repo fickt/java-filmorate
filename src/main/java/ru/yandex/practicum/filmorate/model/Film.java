@@ -2,15 +2,19 @@ package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Data
+@Component
 public class Film {
     private int id;
     private String name;
@@ -19,6 +23,9 @@ public class Film {
     private String releaseDate;
     private Long durationInLong;
     private transient Duration duration;
+    private Set<User> personsLikedFilm = new HashSet<>();
+    int amountOfLikes = 0;
+
 
     public void setReleaseDate(LocalDate localDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-uuuu").withResolverStyle(ResolverStyle.STRICT);
@@ -39,5 +46,9 @@ public class Film {
     public Duration getDuration() {  // helps to cope with serialization problems
         duration = Duration.of(durationInLong, ChronoUnit.SECONDS);
         return duration;
+    }
+
+    public void updateAmountOfLikes() {
+        amountOfLikes = personsLikedFilm.size();
     }
 }

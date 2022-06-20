@@ -2,50 +2,60 @@ package ru.yandex.practicum.filmorate;
 
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
-
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
 import ru.yandex.practicum.filmorate.controller.FilmController;
+import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import static org.junit.jupiter.api.Assertions.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(FilmController.class)
+
+
 @AutoConfigureMockMvc
+@ContextConfiguration(classes = {AppConfiguration.class})
+@WebMvcTest(FilmController.class)
 public class FilmControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Mock
+            @Autowired
+    UserController userController;
     private Gson json = new Gson();
+
 
     @Test
     void shouldReturnStatus400CreatingFilmWithMissingName() throws Exception {
-        Film film = new Film();
-        film.setId(0);
+
+       Film film = new Film();
         film.setName("");
         film.setReleaseDate(LocalDate.of(2002, 12,3));
         film.setDuration(Duration.of(100, ChronoUnit.MINUTES));
         film.setDescription("description of film");
 
-        int responseStatus = this.mvc.perform(post("/films") //add
+        this.mvc.perform(post("/films/add") //add
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json.toJson(film))).andReturn().getResponse().getStatus();
+                .content(json.toJson(film))).andExpect(status().isBadRequest()).andReturn();
 
-        assertEquals(400, responseStatus);
     }
 
     @Test
     void shouldReturnStatus400CreatingFilmWithDescriptionOver200length() throws Exception {
         Film film = new Film();
-        film.setId(0);
         film.setName("film name");
         film.setReleaseDate(LocalDate.of(2002, 12,3));
         film.setDuration(Duration.of(100, ChronoUnit.SECONDS));
@@ -53,7 +63,7 @@ public class FilmControllerTest {
                 "otherwise I will have to work on the program logic over and over again and there are no " +
                 "appropriate words to find to describe how strong I dont want to do this............................" +
                 ".................................................................................................");
-        int responseStatus = this.mvc.perform(post("/films") //add
+        int responseStatus = this.mvc.perform(post("/films/add") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -63,13 +73,12 @@ public class FilmControllerTest {
     @Test
     void shouldReturnStatus400CreatingFilmWithInvalidReleaseDate() throws Exception {
         Film film = new Film();
-        film.setId(0);
         film.setName("film name");
         film.setReleaseDate(LocalDate.of(1894, 12,3));
         film.setDuration(Duration.of(100, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films") //add
+        int responseStatus = this.mvc.perform(post("/films/add") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -79,13 +88,12 @@ public class FilmControllerTest {
     @Test
     void shouldReturnStatus400CreatingFilmWithNegativeDuration() throws Exception {
         Film film = new Film();
-        film.setId(0);
         film.setName("film name");
         film.setReleaseDate(LocalDate.of(2002, 12,3));
         film.setDuration(Duration.of(-100, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films") //add
+        int responseStatus = this.mvc.perform(post("/films/add") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -95,13 +103,12 @@ public class FilmControllerTest {
     @Test
     void shouldReturnStatus200CreatingFilmWithValidValues() throws Exception {
         Film film = new Film();
-        film.setId(0);
         film.setName("film name");
         film.setReleaseDate(LocalDate.of(2002, 12,3));
         film.setDuration(Duration.of(200, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films") //add
+        int responseStatus = this.mvc.perform(post("/films/add") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 

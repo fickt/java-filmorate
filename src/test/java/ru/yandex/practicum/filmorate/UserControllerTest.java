@@ -7,22 +7,24 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.datastorage.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.Map;
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc
+@ContextConfiguration(classes = {AppConfiguration.class})
 public class UserControllerTest {
 
     @Autowired
@@ -30,6 +32,24 @@ public class UserControllerTest {
     private Gson json = new Gson();
 
 
+    @Test
+    void shouldReplaceNameWithLoginIfNameIsMissing() throws Exception { //if run separately, test passes... strange
+        User user = new User();                                         //TODO to figure out why
+        user.setId(0);
+        user.setName("");
+        user.setEmail("login@mail.ru");
+        user.setLogin("login");
+        user.setBirthday(LocalDate.of(2001, 1, 12));
+
+        String userAsJson = json.toJson(user);
+
+        this.mvc.perform(post("/users/newuser") //newuser
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userAsJson));
+
+        this.mvc.perform(get("/users")) //allusers
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("login")));
+    }
 
     @Test
     void shouldReturnResponseStatus400CreatingUserWithNoEmail() throws Exception {
@@ -39,7 +59,7 @@ public class UserControllerTest {
         user.setLogin("login");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users") //newuser
+        int responseStatus = this.mvc.perform(post("/users/newuser") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
@@ -54,7 +74,7 @@ public class UserControllerTest {
         user.setLogin("login");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users") //newuser
+        int responseStatus = this.mvc.perform(post("/users/newuser") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
@@ -70,31 +90,13 @@ public class UserControllerTest {
         user.setLogin("lo gin");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users") //newuser
+        int responseStatus = this.mvc.perform(post("/users/newuser") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
         assertEquals(400, responseStatus);
     }
 
-    @Test
-    void shouldReplaceNameWithLoginIfNameIsMissing() throws Exception {
-        User user = new User();
-        user.setId(0);
-        user.setName("");
-        user.setEmail("login@mail.ru");
-        user.setLogin("login");
-        user.setBirthday(LocalDate.of(2001, 1, 12));
-
-        String userAsJson = json.toJson(user);
-
-        this.mvc.perform(post("/users") //newuser
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userAsJson));
-
-        this.mvc.perform(get("/users")) //allusers
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("login")));
-    }
 
     @Test
     void shouldReturnResponseStatus400CreatingUserWithInvalidBirthday() throws Exception {
@@ -107,11 +109,10 @@ public class UserControllerTest {
 
         String userAsJson = json.toJson(user);
 
-       int status = this.mvc.perform(post("/users") //newuser
+        this.mvc.perform(post("/users/newuser") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(userAsJson)).andReturn().getResponse().getStatus();
+                .content(userAsJson)).andExpect(status().isBadRequest());
 
-        assertEquals(400, status);
     }
 
     @Test
@@ -124,11 +125,9 @@ public class UserControllerTest {
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
         String userAsJson = json.toJson(user);
-System.out.println(userAsJson);
-        int status = this.mvc.perform(post("/users") //newuser
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(userAsJson)).andReturn().getResponse().getStatus();
 
-        assertEquals(200, status);
+        this.mvc.perform(post("/users/newuser") //newuser
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userAsJson)).andExpect(status().isOk());
     }
 }

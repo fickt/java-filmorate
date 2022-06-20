@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.datastorage;
 
+import ru.yandex.practicum.filmorate.datastorage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class FilmStorage {
+
+public class InMemoryFilmStorage implements FilmStorage {
 
     private Map<Integer, Film> filmStorage = new HashMap<>(); // Using HashMaps to facilitate the process of searching users by ID
 
