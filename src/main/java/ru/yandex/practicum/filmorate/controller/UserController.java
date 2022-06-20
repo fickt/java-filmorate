@@ -4,8 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+<<<<<<< Updated upstream
 import ru.yandex.practicum.filmorate.datastorage.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+=======
+import ru.yandex.practicum.filmorate.datastorage.InMemoryUserStorage;
+>>>>>>> Stashed changes
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -24,7 +28,11 @@ import java.util.logging.Logger;
 @RequestMapping("/users")
 public class UserController {
 
+<<<<<<< Updated upstream
     private UserStorage userStorage;
+=======
+    private InMemoryUserStorage userStorage = new InMemoryUserStorage();
+>>>>>>> Stashed changes
     private int userIdGenerator = 0;
     private Logger userControllerLogger = Logger.getLogger("userControllerLogger");
     private UserService userService;

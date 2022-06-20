@@ -4,9 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+<<<<<<< Updated upstream
 import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.filmorate.datastorage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+=======
+import ru.yandex.practicum.filmorate.datastorage.InMemoryFilmStorage;
+>>>>>>> Stashed changes
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -25,8 +29,13 @@ import java.util.logging.Logger;
 
 @RequestMapping("/films")
 public class FilmController {
+<<<<<<< Updated upstream
     private FilmStorage filmStorage;
     private FilmService filmService;
+=======
+
+    private InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
+>>>>>>> Stashed changes
     private int filmIdGenerator = 0;
     private Logger filmControllerLogger = Logger.getLogger("filmControllerLogger");
     private RestTemplate restTemplate = new RestTemplate();
