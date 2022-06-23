@@ -6,10 +6,12 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
+//import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -25,16 +27,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = {AppConfiguration.class})
+//@ContextConfiguration(classes = {AppConfiguration.class})
 @WebMvcTest(FilmController.class)
+@ComponentScan
 public class FilmControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
-    @Mock
-            @Autowired
+
+    @Autowired
     UserController userController;
+    @Autowired
+    FilmController filmController;
     private Gson json = new Gson();
 
 
@@ -47,7 +52,7 @@ public class FilmControllerTest {
         film.setDuration(Duration.of(100, ChronoUnit.MINUTES));
         film.setDescription("description of film");
 
-        this.mvc.perform(post("/films/add") //add
+        this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andExpect(status().isBadRequest()).andReturn();
 

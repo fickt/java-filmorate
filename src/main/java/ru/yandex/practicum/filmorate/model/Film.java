@@ -19,7 +19,7 @@ public class Film {
     private int id;
     private String name;
     private String description;
-    @JsonFormat(pattern = "dd-MM-uuuu", shape = JsonFormat.Shape.STRING)
+    @JsonFormat(pattern = "uuuu-MM-dd", shape = JsonFormat.Shape.STRING)
     private String releaseDate;
     private Long durationInLong;
     private transient Duration duration;
@@ -28,12 +28,12 @@ public class Film {
 
 
     public void setReleaseDate(LocalDate localDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-uuuu").withResolverStyle(ResolverStyle.STRICT);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
         this.releaseDate = formatter.format(localDate);
     }
 
     public LocalDate getReleaseDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-uuuu").withResolverStyle(ResolverStyle.STRICT);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
         return LocalDate.parse(releaseDate, formatter);
 
     }

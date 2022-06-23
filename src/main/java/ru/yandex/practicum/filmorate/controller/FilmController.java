@@ -43,6 +43,10 @@ public class FilmController {
         this.filmService = filmService;
     }
 
+    public FilmController() {
+
+    }
+
     @PostMapping //add
     public ResponseEntity<Film> addFilm(@RequestBody Film film) {
         if (film == null || film.getName() == null || film.getName().isBlank() || film.getDescription().length() >= 200 ||

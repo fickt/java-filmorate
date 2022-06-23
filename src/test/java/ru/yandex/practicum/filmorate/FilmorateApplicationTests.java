@@ -7,7 +7,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
-import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
+//import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -18,7 +18,7 @@ import java.time.temporal.ChronoUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {FilmorateApplication.class},  webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@ContextConfiguration(classes = {AppConfiguration.class})
+//@ContextConfiguration(classes = {AppConfiguration.class})
 @ActiveProfiles("test")
 
 class FilmorateApplicationTests {

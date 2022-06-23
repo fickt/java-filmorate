@@ -10,7 +10,6 @@ import java.util.Map;
 
 
 @Component
-
 public class InMemoryUserStorage implements UserStorage {
 
     private Map<Integer, User> userStorage = new HashMap<>(); // Using HashMaps to facilitate the process of searching users by ID

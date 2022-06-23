@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
+//import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -24,7 +24,7 @@ import java.time.LocalDate;
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc
-@ContextConfiguration(classes = {AppConfiguration.class})
+//@ContextConfiguration(classes = {AppConfiguration.class})
 public class UserControllerTest {
 
     @Autowired
