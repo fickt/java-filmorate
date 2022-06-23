@@ -24,7 +24,7 @@ public class Film {
     private Long durationInLong;
     private transient Duration duration;
     private Set<User> personsLikedFilm = new HashSet<>();
-    int amountOfLikes = 0;
+    private int amountOfLikes = 0;
 
 
     public void setReleaseDate(LocalDate localDate) {

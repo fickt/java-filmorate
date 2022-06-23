@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.configuration;
 
 
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -14,39 +15,40 @@ import ru.yandex.practicum.filmorate.datastorage.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-@Configuration
+//@Configuration
 @ComponentScan
+@TestConfiguration
 public class AppConfiguration {
 
 
-    @Bean
-    @Primary
+   // @Bean
+   // @Primary
     public FilmController filmControllerConfig() {
         return new FilmController(inMemoryFilmStorageConfig(), filmServiceConfig());
     }
 
-    @Bean
-    @Primary
+  //  @Bean
+   // @Primary
     public UserController userControllerConfig() {
         return new UserController(userStorageConfig(), userServiceConfig());
     }
 
-    @Bean
+   // @Bean
     public FilmStorage inMemoryFilmStorageConfig() {
         return new InMemoryFilmStorage();
     }
 
-    @Bean
+   // @Bean
     public FilmService filmServiceConfig() {
         return new FilmService();
     }
 
-    @Bean
+   // @Bean
     public UserService userServiceConfig() {
         return new UserService();
     }
 
-    @Bean
+   // @Bean
     public UserStorage userStorageConfig() {
         return new InMemoryUserStorage();
     }

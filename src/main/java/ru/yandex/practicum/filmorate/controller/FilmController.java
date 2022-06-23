@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-<<<<<<< Updated upstream
+
 import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.filmorate.datastorage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-=======
+
 import ru.yandex.practicum.filmorate.datastorage.InMemoryFilmStorage;
->>>>>>> Stashed changes
+
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
@@ -26,16 +26,13 @@ import java.util.logging.Logger;
  Не получается аннотировать как @RestController, так как в файле конфигураций
  зависимостей уже определён как @Bean
 */
-
+@RestController
 @RequestMapping("/films")
 public class FilmController {
-<<<<<<< Updated upstream
+
     private FilmStorage filmStorage;
     private FilmService filmService;
-=======
 
-    private InMemoryFilmStorage filmStorage = new InMemoryFilmStorage();
->>>>>>> Stashed changes
     private int filmIdGenerator = 0;
     private Logger filmControllerLogger = Logger.getLogger("filmControllerLogger");
     private RestTemplate restTemplate = new RestTemplate();
@@ -46,7 +43,7 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    @PostMapping("/add") //add
+    @PostMapping //add
     public ResponseEntity<Film> addFilm(@RequestBody Film film) {
         if (film == null || film.getName() == null || film.getName().isBlank() || film.getDescription().length() >= 200 ||
                 film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))
@@ -63,7 +60,7 @@ public class FilmController {
         }
     }
 
-    @PutMapping("/update") //update
+    @PutMapping //update
     public Film updateFilm(@RequestBody Film film) {
         if (filmStorage.containsFilm(film.getId())) {
             filmStorage.addFilm(film.getId(), film);
@@ -76,7 +73,7 @@ public class FilmController {
     }
 
 
-    @GetMapping("/allfilms") //allfilms
+    @GetMapping //allfilms
     public ResponseEntity<List> getAllFilms() {
         filmControllerLogger.log(Level.INFO, " /allfilms");
         return new ResponseEntity(filmStorage.getAllFilms().values(), HttpStatus.OK);

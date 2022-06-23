@@ -4,12 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-<<<<<<< Updated upstream
 import ru.yandex.practicum.filmorate.datastorage.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-=======
 import ru.yandex.practicum.filmorate.datastorage.InMemoryUserStorage;
->>>>>>> Stashed changes
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -24,15 +21,12 @@ import java.util.logging.Logger;
  Не получается аннотировать как @RestController, так как в файле конфигураций
  зависимостей уже определён как @Bean
  */
-
+@RestController
 @RequestMapping("/users")
 public class UserController {
 
-<<<<<<< Updated upstream
     private UserStorage userStorage;
-=======
-    private InMemoryUserStorage userStorage = new InMemoryUserStorage();
->>>>>>> Stashed changes
+
     private int userIdGenerator = 0;
     private Logger userControllerLogger = Logger.getLogger("userControllerLogger");
     private UserService userService;
@@ -42,7 +36,7 @@ public class UserController {
         this.userStorage = userStorage;
     }
 
-    @PostMapping("/newuser") //newuser
+    @PostMapping //newuser
     public ResponseEntity<User> createNewUser(@RequestBody User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@") ||
                 user.getLogin().isBlank() ||
@@ -61,7 +55,7 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/update") //updateuser
+    @PutMapping //updateuser
     public User updateUser(@RequestBody User user) {
         if (userStorage.containsUser(user.getId())) {
             userStorage.addUser(user.getId(), user);
@@ -73,7 +67,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/allusers") //allusers
+    @GetMapping //allusers
     @ResponseBody
     public ResponseEntity getAllUsers() {
         userControllerLogger.log(Level.INFO, " /allusers");
