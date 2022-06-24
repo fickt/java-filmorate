@@ -26,7 +26,7 @@ public class FilmService {
 
     public List<Film> getTopFilms(FilmStorage filmStorage, int count) {
 
-        if(count == 0) {
+        if(count == 0 || count < 0) {
             count = 10;
         }
        return filmStorage.getAllFilms().values()

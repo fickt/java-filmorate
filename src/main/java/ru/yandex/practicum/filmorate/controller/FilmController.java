@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,10 +49,11 @@ public class FilmController {
     }
 
     @PostMapping //add
+
     public ResponseEntity<Film> addFilm(@RequestBody Film film) {
         if (film == null || film.getName() == null || film.getName().isBlank() || film.getDescription().length() >= 200 ||
                 film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))
-                || film.getDuration().isNegative()) {
+                || film.getDuration().isNegative() || film.getReleaseDate() == null) {
             filmControllerLogger.log(Level.WARNING, "ValidationException /film/add");
             throw new ValidationException("Ошибка валидации /film/add");
 
@@ -93,25 +95,38 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
+    @ResponseBody
     public ResponseEntity<Film> putLike(@PathVariable int id, @PathVariable int userId) {
-        if(filmStorage.containsFilm(id)) {
-            User user = restTemplate.getForObject("http://localhost:8080/users/finduser/" + userId, User.class);
-            filmService.putLike(filmStorage.getAllFilms().get(id), user);
-            filmControllerLogger.log(Level.INFO, "Like has been put! /like");
+
+        if(userId < 0) {
+            filmControllerLogger.log(Level.INFO, "ошибка валидации, userID - отрицательное число /like");
+            throw new ValidationException("ошибка валидации, userID - отрицательное число");
         } else {
-            throw new NotFoundException("Film with" + id + "hasn't been found!");
+            if (filmStorage.containsFilm(id)) {
+                User user = restTemplate.getForObject("http://localhost:8080/users/" + userId, User.class);
+                filmService.putLike(filmStorage.getAllFilms().get(id), user);
+                filmControllerLogger.log(Level.INFO, "Like has been put! /like");
+            } else {
+                throw new NotFoundException("Film with" + id + "hasn't been found!");
+            }
         }
         return new ResponseEntity<>(filmStorage.getAllFilms().get(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<Film> removeLike(@PathVariable int id, @PathVariable int userId) {
-        if(filmStorage.containsFilm(id)) {
-            User user = restTemplate.getForObject("http://localhost:8080/users/finduser/" + userId, User.class);
-            filmService.removeLike(filmStorage.getAllFilms().get(id), user);
-            filmControllerLogger.log(Level.INFO, "Like has been removed! /dislike");
+
+        if(userId < 0) {
+            filmControllerLogger.log(Level.INFO, "ошибка валидации, userID - отрицательное число /like");
+            throw new ValidationException("ошибка валидации, userID - отрицательное число");
         } else {
-            throw new NotFoundException("Film with" + id + "hasn't been found!");
+            if (filmStorage.containsFilm(id)) {
+                User user = restTemplate.getForObject("http://localhost:8080/users/" + userId, User.class);
+                filmService.removeLike(filmStorage.getAllFilms().get(id), user);
+                filmControllerLogger.log(Level.INFO, "Like has been removed! /dislike");
+            } else {
+                throw new NotFoundException("Film with" + id + "hasn't been found!");
+            }
         }
         return new ResponseEntity<>(filmStorage.getAllFilms().get(id), HttpStatus.OK);
     }

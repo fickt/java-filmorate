@@ -62,7 +62,7 @@ public class UserController {
             userControllerLogger.log(Level.INFO, "user has been updated! /updateuser");
             return user;
         } else {
-            Logger.getLogger("logger").log(Level.WARNING, "ValidationException /updateuser");
+            Logger.getLogger("logger").log(Level.WARNING, "ValidationException /updateuser " + user.getId());
             throw new ValidationException("Ошибка валидации user/updateuser");
         }
     }
@@ -74,14 +74,15 @@ public class UserController {
         return new ResponseEntity(userStorage.getAllUsers().values(), HttpStatus.OK);
     }
 
-    @GetMapping("/finduser/{userId}")
+    @GetMapping("/{userId}") //finduser
     public ResponseEntity<User> getUser(@PathVariable int userId) {
         userControllerLogger.log(Level.INFO, "/allusers");
+
         if (userStorage.getAllUsers().containsKey(userId)) {
             userControllerLogger.log(Level.INFO, "successfully /finduser");
             return new ResponseEntity<>(userStorage.getAllUsers().get(userId), HttpStatus.OK);
         } else {
-            userControllerLogger.log(Level.WARNING, "User with given ID hasn't been found! /finduser");
+            userControllerLogger.log(Level.WARNING, "User with " + userId + " ID hasn't been found! /finduser ");
             throw new NotFoundException("User with given ID hasn't been found!");
         }
     }

@@ -19,7 +19,7 @@ public class User {
     private String name;
     @JsonFormat(pattern = "uuuu-MM-dd", shape = JsonFormat.Shape.STRING) //"dd-MM-uuuu"
     private String birthday;
-    private Set<User> listOfFriends = new HashSet<>();
+    private HashSet<User> listOfFriends;// = new HashSet<>();
 
     public void setBirthday(LocalDate localDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
