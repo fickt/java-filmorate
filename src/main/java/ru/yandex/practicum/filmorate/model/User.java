@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -13,13 +14,13 @@ import java.util.Set;
 @Data
 @Component
 public class User {
-    private int id;
+    private long id;
     private String email;
     private String login;
     private String name;
     @JsonFormat(pattern = "uuuu-MM-dd", shape = JsonFormat.Shape.STRING) //"dd-MM-uuuu"
     private String birthday;
-    private HashSet<User> listOfFriends;// = new HashSet<>();
+     private Set<Long> listOfFriends = new HashSet<>();
 
     public void setBirthday(LocalDate localDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
@@ -30,5 +31,12 @@ public class User {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
         return LocalDate.parse(birthday, formatter);
 
+    }
+
+    public long getId() {
+        if (id == 0){
+            return 1;
+        }
+        return id;
     }
 }

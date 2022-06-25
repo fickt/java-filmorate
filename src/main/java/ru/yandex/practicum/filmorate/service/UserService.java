@@ -5,6 +5,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -12,8 +13,8 @@ import static java.util.stream.Collectors.toList;
 public class UserService {
 
    public void addFriend(User user, User friend) {
-        user.getListOfFriends().add(friend);
-        friend.getListOfFriends().add(user);
+        user.getListOfFriends().add(friend.getId());
+        friend.getListOfFriends().add(user.getId());
     }
 
     public void deleteFriend(User user, User friend) {
@@ -21,14 +22,14 @@ public class UserService {
        friend.getListOfFriends().remove(user);
     }
 
-    public Set<User> getAllFriendsOfUser(User user) {
+    public Set<Long> getAllFriendsOfUser(User user) {
       return user.getListOfFriends();
     }
 
-    public List<User> findCommonFriends(User user, User otherUser) {
-        Set<User> listOfFriends = user.getListOfFriends();
-        Set<User> listOfFriends1 =  otherUser.getListOfFriends();
-        List<User> commonFriends = listOfFriends.stream().filter(listOfFriends1::contains).collect(toList());
+    public Set<Long> findCommonFriends(User user, User otherUser) {
+        Set<Long> listOfFriends = user.getListOfFriends();
+        Set<Long> listOfFriends1 =  otherUser.getListOfFriends();
+        Set<Long> commonFriends = listOfFriends.stream().filter(listOfFriends1::contains).collect(Collectors.toSet());
         return commonFriends;
     }
 }

@@ -2,16 +2,21 @@ package ru.yandex.practicum.filmorate.datastorage.interfaces;
 
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.List;
 import java.util.Map;
 
 
 
 public interface UserStorage {
 
-    void addUser(int userId, User user);
+    void addUser(long userId, User user);
 
-    boolean containsUser(int userId);
+    boolean containsUser(long userId);
 
-    Map<Integer, User> getAllUsers();
+    boolean containsUser(String login);
+
+    Map<Long, User> getAllUsers();
+
+    public List<String> getLogins();
 
 }

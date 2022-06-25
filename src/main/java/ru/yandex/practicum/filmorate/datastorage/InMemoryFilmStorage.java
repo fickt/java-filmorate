@@ -9,17 +9,17 @@ import java.util.Map;
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private Map<Integer, Film> filmStorage = new HashMap<>(); // Using HashMaps to facilitate the process of searching users by ID
+    private Map<Long, Film> filmStorage = new HashMap<>(); // Using HashMaps to facilitate the process of searching users by ID
 
-    public void addFilm(int filmId, Film film) {
+    public void addFilm(long filmId, Film film) {
         filmStorage.put(filmId, film);
     }
 
-    public boolean containsFilm(int filmId){
+    public boolean containsFilm(long filmId){
         return filmStorage.containsKey(filmId);
     }
 
-    public Map<Integer, Film> getAllFilms() {
+    public Map<Long, Film> getAllFilms() {
         return filmStorage;
     }
 }

@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.filmorate.datastorage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 
-import ru.yandex.practicum.filmorate.datastorage.InMemoryFilmStorage;
 
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -34,7 +32,7 @@ public class FilmController {
     private FilmStorage filmStorage;
     private FilmService filmService;
 
-    private int filmIdGenerator = 0;
+    private long filmIdGenerator = 1;
     private Logger filmControllerLogger = Logger.getLogger("filmControllerLogger");
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -53,7 +51,7 @@ public class FilmController {
     public ResponseEntity<Film> addFilm(@RequestBody Film film) {
         if (film == null || film.getName() == null || film.getName().isBlank() || film.getDescription().length() >= 200 ||
                 film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))
-                || film.getDuration().isNegative() || film.getReleaseDate() == null) {
+                || film.getDurationForComparing().isNegative() || film.getReleaseDate() == null) {
             filmControllerLogger.log(Level.WARNING, "ValidationException /film/add");
             throw new ValidationException("Ошибка валидации /film/add");
 
@@ -73,8 +71,8 @@ public class FilmController {
             filmControllerLogger.log(Level.INFO, "film has been updated /update");
             return film;
         } else {
-            filmControllerLogger.log(Level.WARNING, "ValidationException /film/update");
-            throw new ValidationException("Ошибка валидации /film/update");
+            filmControllerLogger.log(Level.WARNING, "NotFoundException /film/update");
+            throw new NotFoundException("Film with" + film.getId() + "ID hasn't been found! /film/update");
         }
     }
 
@@ -86,7 +84,7 @@ public class FilmController {
     }
 
     @GetMapping("/{filmId}")
-    public ResponseEntity<Film> getFilm(@PathVariable int filmId) {
+    public ResponseEntity<Film> getFilm(@PathVariable long filmId) {
         if (filmStorage.containsFilm(filmId)) {
             return new ResponseEntity<>(filmStorage.getAllFilms().get(filmId), HttpStatus.OK);
         } else {
@@ -96,7 +94,7 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     @ResponseBody
-    public ResponseEntity<Film> putLike(@PathVariable int id, @PathVariable int userId) {
+    public ResponseEntity<Film> putLike(@PathVariable long id, @PathVariable long userId) {
 
         if(userId < 0) {
             filmControllerLogger.log(Level.INFO, "ошибка валидации, userID - отрицательное число /like");
@@ -114,11 +112,11 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<Film> removeLike(@PathVariable int id, @PathVariable int userId) {
+    public ResponseEntity<Film> removeLike(@PathVariable long id, @PathVariable long userId) {
 
-        if(userId < 0) {
-            filmControllerLogger.log(Level.INFO, "ошибка валидации, userID - отрицательное число /like");
-            throw new ValidationException("ошибка валидации, userID - отрицательное число");
+        if(userId < 0 || id < 0) {
+            filmControllerLogger.log(Level.INFO, "ошибка валидации, userID / filmID - отрицательное число /like");
+            throw new NotFoundException("ошибка валидации, userID / filmID- отрицательное число");
         } else {
             if (filmStorage.containsFilm(id)) {
                 User user = restTemplate.getForObject("http://localhost:8080/users/" + userId, User.class);
@@ -131,8 +129,11 @@ public class FilmController {
         return new ResponseEntity<>(filmStorage.getAllFilms().get(id), HttpStatus.OK);
     }
 
-    @GetMapping("/popular")
-    public ResponseEntity<List> getTopFilms(@RequestParam int count) {
+    @GetMapping("/popular") //?count={count}
+    public ResponseEntity<List> getTopFilms(@RequestParam(required = false) Integer count) {
+        if (count == null){
+            count = 0;
+        }
         if (!(filmStorage.getAllFilms().size() < count)) {
             return new ResponseEntity<>(filmService.getTopFilms(filmStorage, count), HttpStatus.OK);
         } else {

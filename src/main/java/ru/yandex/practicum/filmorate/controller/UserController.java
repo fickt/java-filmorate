@@ -27,7 +27,7 @@ public class UserController {
 
     private UserStorage userStorage;
 
-    private int userIdGenerator = 0;
+    private long userIdGenerator = 1;
     private Logger userControllerLogger = Logger.getLogger("userControllerLogger");
     private UserService userService;
     @Autowired
@@ -38,20 +38,26 @@ public class UserController {
 
     @PostMapping //newuser
     public ResponseEntity<User> createNewUser(@RequestBody User user) {
+
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@") ||
                 user.getLogin().isBlank() ||
                 user.getLogin().contains(" ") || user.getBirthday().isAfter(LocalDate.now())) {
             userControllerLogger.log(Level.WARNING, "ValidationException /newuser");
             throw new ValidationException("Ошибка валидации /user/newuser");
         } else {
+
             if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
+
             user.setId(userIdGenerator);
             userStorage.addUser(userIdGenerator, user);
             userIdGenerator++;
+
             userControllerLogger.log(Level.INFO, "user has been created! /newuser");
+
         }
+
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -63,7 +69,7 @@ public class UserController {
             return user;
         } else {
             Logger.getLogger("logger").log(Level.WARNING, "ValidationException /updateuser " + user.getId());
-            throw new ValidationException("Ошибка валидации user/updateuser");
+            throw new NotFoundException("Ошибка валидации user/updateuser");
         }
     }
 
@@ -75,7 +81,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}") //finduser
-    public ResponseEntity<User> getUser(@PathVariable int userId) {
+    public ResponseEntity<User> getUser(@PathVariable long userId) {
         userControllerLogger.log(Level.INFO, "/allusers");
 
         if (userStorage.getAllUsers().containsKey(userId)) {
@@ -88,7 +94,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<User> addFriend(@PathVariable int id, @PathVariable int friendId) {
+    public ResponseEntity<User> addFriend(@PathVariable long id, @PathVariable long friendId) {
         if (userStorage.containsUser(id) && userStorage.containsUser(friendId)) {
             userService.addFriend(userStorage.getAllUsers().get(id), userStorage.getAllUsers().get(friendId));
             userControllerLogger.log(Level.INFO, "successfully /friends");
@@ -100,7 +106,7 @@ public class UserController {
     }
 
     @DeleteMapping ("/{id}/friends/{friendId}")
-    public ResponseEntity<User> deleteFriend(@PathVariable int id, @PathVariable int friendId) {
+    public ResponseEntity<User> deleteFriend(@PathVariable long id, @PathVariable long friendId) {
         if (userStorage.containsUser(id) && userStorage.containsUser(friendId)) {
             userService.deleteFriend(userStorage.getAllUsers().get(id), userStorage.getAllUsers().get(friendId));
             userControllerLogger.log(Level.INFO, "successfully /friends DELETE");
@@ -112,7 +118,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/friends")
-    public ResponseEntity<Set<User>> getAllFriendsOfUser(@PathVariable int id) {
+    public ResponseEntity<Set<Long>> getAllFriendsOfUser(@PathVariable long id) {
         if (userStorage.containsUser(id)) {
             userControllerLogger.log(Level.INFO, "successfully /allfriends");
          return new ResponseEntity<>(userService.getAllFriendsOfUser(userStorage.getAllUsers().get(id)), HttpStatus.OK);
@@ -122,8 +128,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("/users/{id}/friends/common/{otherId}")
-    public ResponseEntity<List<User>> getCommonFriends(@PathVariable int id, @PathVariable int otherId) {
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public ResponseEntity<Set<Long>> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
         if (userStorage.containsUser(id) && userStorage.containsUser(otherId)) {
             userControllerLogger.log(Level.INFO, "successfully /friends/common");
             return new ResponseEntity<>(userService.findCommonFriends(userStorage.getAllUsers().get(id),

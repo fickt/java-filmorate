@@ -10,9 +10,9 @@ import java.util.Map;
 @Component
 public interface FilmStorage {
 
-    public void addFilm(int filmId, Film film);
+    public void addFilm(long filmId, Film film);
 
-    public boolean containsFilm(int filmId);
+    public boolean containsFilm(long filmId);
 
-    public Map<Integer, Film> getAllFilms();
+    public Map<Long, Film> getAllFilms();
 }

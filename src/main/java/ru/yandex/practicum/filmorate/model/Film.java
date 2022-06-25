@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
@@ -16,15 +17,16 @@ import java.util.Set;
 @Data
 @Component
 public class Film {
-    private int id;
+    private long id;
     private String name;
     private String description;
     @JsonFormat(pattern = "uuuu-MM-dd", shape = JsonFormat.Shape.STRING)
     private String releaseDate;
-    private Long durationInLong;
-    private transient Duration duration;
+    //private long duration;
+    @JsonFormat(pattern = "MINUTES", shape = JsonFormat.Shape.NUMBER)
+    private long duration;
     private Set<User> personsLikedFilm = new HashSet<>();
-    private int amountOfLikes = 0;
+    private int rate = 0;
 
 
     public void setReleaseDate(LocalDate localDate) {
@@ -39,16 +41,22 @@ public class Film {
     }
 
     public void setDuration(Duration duration) {   // helps to cope with serialization problems
-        this.duration = duration;
-        this.durationInLong = duration.toSeconds();
+       // DateTimeFormatter formatter = DateTimeFormatter.ofPattern("mm");
+       this.duration = duration.toMinutes();
+      //  this.duration =  duration.toSecondsPart() * 19;
     }
 
-    public Duration getDuration() {  // helps to cope with serialization problems
-        duration = Duration.of(durationInLong, ChronoUnit.SECONDS);
-        return duration;
+
+        public long getDuration() {  // helps to cope with serialization problems
+        return this.duration;
+    }
+
+    public Duration getDurationForComparing() {  // helps to cope with serialization problems
+        Duration duration1 = Duration.of(duration, ChronoUnit.MINUTES); // from int to Duration
+        return duration1;
     }
 
     public void updateAmountOfLikes() {
-        amountOfLikes = personsLikedFilm.size();
+        rate = personsLikedFilm.size();
     }
 }

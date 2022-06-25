@@ -44,7 +44,7 @@ class FilmorateApplicationTests {
 
         restTemplate.put("http://localhost:8080/films/0/like/0", Film.class);
 
-        int likes = restTemplate.getForObject("http://localhost:8080/films/0", Film.class).getAmountOfLikes();
+        int likes = restTemplate.getForObject("http://localhost:8080/films/0", Film.class).getRate();
 
         assertEquals(1, likes);
     }
