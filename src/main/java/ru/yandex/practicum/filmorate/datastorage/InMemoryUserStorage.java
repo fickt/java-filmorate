@@ -1,8 +1,6 @@
 package ru.yandex.practicum.filmorate.datastorage;
 
 import org.springframework.stereotype.Component;
-
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.yandex.practicum.filmorate.datastorage.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;

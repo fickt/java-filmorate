@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.datastorage;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.datastorage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 
