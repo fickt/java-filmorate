@@ -3,28 +3,26 @@ package ru.yandex.practicum.filmorate;
 import com.google.gson.Gson;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-//import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc
-//@ContextConfiguration(classes = {AppConfiguration.class})
+@ComponentScan
 public class UserControllerTest {
 
     @Autowired
@@ -43,7 +41,7 @@ public class UserControllerTest {
 
         String userAsJson = json.toJson(user);
 
-        this.mvc.perform(post("/users/newuser") //newuser
+        this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userAsJson));
 
@@ -59,7 +57,7 @@ public class UserControllerTest {
         user.setLogin("login");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users/newuser") //newuser
+        int responseStatus = this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
@@ -74,7 +72,7 @@ public class UserControllerTest {
         user.setLogin("login");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users/newuser") //newuser
+        int responseStatus = this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
@@ -90,7 +88,7 @@ public class UserControllerTest {
         user.setLogin("lo gin");
         user.setBirthday(LocalDate.of(2001, 1, 12));
 
-        int responseStatus = this.mvc.perform(post("/users/newuser") //newuser
+        int responseStatus = this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(user))).andReturn().getResponse().getStatus();
 
@@ -109,7 +107,7 @@ public class UserControllerTest {
 
         String userAsJson = json.toJson(user);
 
-        this.mvc.perform(post("/users/newuser") //newuser
+        this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userAsJson)).andExpect(status().isBadRequest());
 
@@ -126,7 +124,7 @@ public class UserControllerTest {
 
         String userAsJson = json.toJson(user);
 
-        this.mvc.perform(post("/users/newuser") //newuser
+        this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userAsJson)).andExpect(status().isOk());
     }

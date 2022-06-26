@@ -18,7 +18,7 @@ public class User {
     private String email;
     private String login;
     private String name;
-    @JsonFormat(pattern = "uuuu-MM-dd", shape = JsonFormat.Shape.STRING) //"dd-MM-uuuu"
+    @JsonFormat(pattern = "uuuu-MM-dd", shape = JsonFormat.Shape.STRING)
     private String birthday;
      private Set<Long> listOfFriends = new HashSet<>();
 

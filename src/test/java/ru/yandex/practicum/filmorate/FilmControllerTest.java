@@ -2,18 +2,13 @@ package ru.yandex.practicum.filmorate;
 
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-//import ru.yandex.practicum.filmorate.configuration.AppConfiguration;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.Duration;
@@ -27,7 +22,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @AutoConfigureMockMvc
-//@ContextConfiguration(classes = {AppConfiguration.class})
 @WebMvcTest(FilmController.class)
 @ComponentScan
 public class FilmControllerTest {
@@ -35,13 +29,7 @@ public class FilmControllerTest {
     @Autowired
     private MockMvc mvc;
 
-
-    @Autowired
-    UserController userController;
-    @Autowired
-    FilmController filmController;
     private Gson json = new Gson();
-
 
     @Test
     void shouldReturnStatus400CreatingFilmWithMissingName() throws Exception {
@@ -68,7 +56,7 @@ public class FilmControllerTest {
                 "otherwise I will have to work on the program logic over and over again and there are no " +
                 "appropriate words to find to describe how strong I dont want to do this............................" +
                 ".................................................................................................");
-        int responseStatus = this.mvc.perform(post("/films/add") //add
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -83,7 +71,7 @@ public class FilmControllerTest {
         film.setDuration(Duration.of(100, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films/add") //add
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -98,7 +86,7 @@ public class FilmControllerTest {
         film.setDuration(Duration.of(-100, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films/add") //add
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
@@ -113,7 +101,7 @@ public class FilmControllerTest {
         film.setDuration(Duration.of(200, ChronoUnit.SECONDS));
         film.setDescription("description");
 
-        int responseStatus = this.mvc.perform(post("/films/add") //add
+        int responseStatus = this.mvc.perform(post("/films") //add
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
