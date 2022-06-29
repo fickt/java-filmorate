@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import ru.yandex.practicum.filmorate.datastorage.interfaces.FilmStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
 
+    private UserService userService;
     private FilmStorage filmStorage;
     private Logger filmServiceLogger = Logger.getLogger("filmServiceLogger");
-    private RestTemplate restTemplate = new RestTemplate();
     private long filmIdGenerator = 1;
 
     public FilmService(FilmStorage filmStorage) {
@@ -72,12 +72,13 @@ public class FilmService {
     }
 
     public ResponseEntity<Film> putLike(long filmId, long userId) {
+
         if (userId < 0) {
             filmServiceLogger.log(Level.INFO, "ошибка валидации, userID - отрицательное число /like");
             throw new ValidationException("ошибка валидации, userID - отрицательное число");
         } else {
             if (filmStorage.containsFilm(filmId)) {
-                User user = restTemplate.getForObject("http://localhost:8080/users/" + userId, User.class);
+                User user = userService.getUser(userId).getBody();
                 filmStorage.getAllFilms().get(filmId).getPersonsLikedFilm().add(user.getId());
                 filmStorage.getAllFilms().get(filmId).updateAmountOfLikes();
                 filmServiceLogger.log(Level.INFO, "Like has been put! /like");
@@ -96,7 +97,7 @@ public class FilmService {
             throw new NotFoundException("ошибка валидации, userID / filmID- отрицательное число");
         } else {
             if (filmStorage.containsFilm(filmId)) {
-                User user = restTemplate.getForObject("http://localhost:8080/users/" + userId, User.class);
+                User user = userService.getUser(userId).getBody();
                 filmStorage.getAllFilms().get(filmId).getPersonsLikedFilm().remove(user.getId());
                 filmStorage.getAllFilms().get(filmId).updateAmountOfLikes();
                 filmServiceLogger.log(Level.INFO, "Like has been removed! /dislike");
@@ -114,4 +115,10 @@ public class FilmService {
                 .limit(count)
                 .sorted(Comparator.comparing(o -> o.getRate())).collect(Collectors.toList()), HttpStatus.OK);
     }
+
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
+
 }

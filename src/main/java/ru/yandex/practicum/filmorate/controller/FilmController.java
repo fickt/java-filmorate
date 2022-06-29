@@ -20,9 +20,6 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    public FilmController() {
-
-    }
 
     @PostMapping //add
     public ResponseEntity<Film> addFilm(@RequestBody Film film) {

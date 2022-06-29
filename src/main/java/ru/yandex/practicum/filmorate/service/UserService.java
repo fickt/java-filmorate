@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    UserStorage userStorage;
+    private UserStorage userStorage;
     private Logger userServiceLogger = Logger.getLogger("userServiceLogger");
-    long userIdGenerator = 1;
+    private long userIdGenerator = 1;
 
     @Autowired
     public UserService(UserStorage userStorage) {

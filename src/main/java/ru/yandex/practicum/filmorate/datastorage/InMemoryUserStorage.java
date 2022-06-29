@@ -8,8 +8,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
