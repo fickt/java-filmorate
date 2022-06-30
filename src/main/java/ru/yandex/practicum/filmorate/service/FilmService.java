@@ -113,7 +113,7 @@ public class FilmService {
         return new ResponseEntity<>(filmStorage.getAllFilms().values()
                 .stream()
                 .limit(count)
-                .sorted(Comparator.comparing(o -> o.getRate())).collect(Collectors.toList()), HttpStatus.OK);
+                .sorted(Comparator.comparing(o -> o.getRate())).filter(o -> o.getRate() > 0).collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @Autowired

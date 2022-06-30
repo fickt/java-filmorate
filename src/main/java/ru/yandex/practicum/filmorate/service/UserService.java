@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -105,25 +106,30 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<Set<Long>> getAllFriendsOfUser(long id) {
+    public ResponseEntity<List<User>> getAllFriendsOfUser(long id) {
         if (userStorage.containsUser(id)) {
             userServiceLogger.log(Level.INFO, "successfully /allfriends");
-            return new ResponseEntity(userStorage.getAllUsers().get(id).getListOfFriends(), HttpStatus.OK);
+            Set<Long> userFriends = userStorage.getAllUsers().get(id).getListOfFriends();
+            List<User> listOfUserFriends = userStorage.getAllUsers().values().stream()
+                    .filter(o -> userFriends.contains(o.getId()))
+                    .collect(Collectors.toList());
+            return new ResponseEntity(listOfUserFriends, HttpStatus.OK);
         } else {
             userServiceLogger.log(Level.INFO, "User with given ID hasn't been found! /allfriends");
             throw new NotFoundException("User/users with given ID has/haven't been found!");
         }
     }
 
-    public ResponseEntity<Set<Long>> findCommonFriends(long id, long otherId) {
+    public ResponseEntity<List<User>> findCommonFriends(long id, long otherId) {
 
         if (userStorage.containsUser(id) && userStorage.containsUser(otherId)) {
             userServiceLogger.log(Level.INFO, "successfully /friends/common");
             Set<Long> listOfFriends = userStorage.getAllUsers().get(id).getListOfFriends();
             Set<Long> listOfFriends1 =  userStorage.getAllUsers().get(otherId).getListOfFriends();
             Set<Long> commonFriends = listOfFriends.stream().filter(listOfFriends1::contains).collect(Collectors.toSet());
-
-            return new ResponseEntity<>(commonFriends, HttpStatus.OK);
+            List<User> listOfCommonFriends = userStorage.getAllUsers().values().stream()
+                    .filter(o -> commonFriends.contains(o.getId())).collect(Collectors.toList());
+            return new ResponseEntity<>(listOfCommonFriends, HttpStatus.OK);
         } else {
             userServiceLogger.log(Level.INFO, "User with given ID hasn't been found! /friends/common");
             throw new NotFoundException("User/users with given ID has/haven't been found!");
