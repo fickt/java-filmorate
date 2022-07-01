@@ -109,16 +109,15 @@ public class FilmService {
     }
 
     public ResponseEntity<List<Film>> getTopFilms(Integer count) {
-
         return new ResponseEntity<>(filmStorage.getAllFilms().values()
                 .stream()
+                .sorted(Comparator.comparing(o -> o.getRate()))
                 .limit(count)
-                .sorted(Comparator.comparing(o -> o.getRate())).filter(o -> o.getRate() > 0).collect(Collectors.toList()), HttpStatus.OK);
+                .collect(Collectors.toList()), HttpStatus.OK);
     }
 
     @Autowired
-    public void setUserService(UserService userService){
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
-
 }
