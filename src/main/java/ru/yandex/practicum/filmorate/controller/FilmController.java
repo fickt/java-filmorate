@@ -1,58 +1,68 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.datastorage.FilmStorage;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import java.time.LocalDate;
-import java.time.Month;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import ru.yandex.practicum.filmorate.service.FilmService;
+
+import java.util.List;
 
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
 
-    private FilmStorage filmStorage = new FilmStorage();
-    private int filmIdGenerator = 0;
-    private Logger filmControllerLogger = Logger.getLogger("filmControllerLogger");
+    private FilmService filmService;
 
-    @PostMapping() //add
-    public Film addFilm(@RequestBody Film film) {
-        if (film.getName() == null || film.getName().isBlank() || film.getDescription().length() >= 200 ||
-                film.getReleaseDate().isBefore(LocalDate.of(1895, Month.DECEMBER, 28))
-                || film.getDuration().isNegative()) {
-            filmControllerLogger.log(Level.WARNING, "ValidationException /film/add");
-            throw new ValidationException("Ошибка валидации /film/add");
-
-        } else {
-            filmControllerLogger.log(Level.INFO, "film has been added /add");
-            film.setId(filmIdGenerator);
-            filmStorage.addFilm(filmIdGenerator, film);
-            filmIdGenerator++;
-            return film;
-        }
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
-    @PutMapping() //update
-    public Film updateFilm(@RequestBody Film film) {
-        if (filmStorage.containsFilm(film.getId())) {
-            filmStorage.addFilm(film.getId(), film);
-            filmControllerLogger.log(Level.INFO, "film has been updated /update");
-            return film;
-        } else {
-            filmControllerLogger.log(Level.WARNING, "ValidationException /film/update");
-            throw new ValidationException("Ошибка валидации /film/update");
-        }
+
+    @PostMapping //add
+    public ResponseEntity<Film> addFilm(@RequestBody Film film) {
+
+        return filmService.addFilm(film);
     }
 
-    @ResponseBody
-    @GetMapping() //allfilms
-    public ResponseEntity getAllFilms() {
-        filmControllerLogger.log(Level.INFO, " /allfilms");
-        return new ResponseEntity(filmStorage.getAllFilms().values(), HttpStatus.OK);
+    @PutMapping //update
+    public ResponseEntity<Film> updateFilm(@RequestBody Film film) {
+
+        return filmService.updateFilm(film);
+    }
+
+
+    @GetMapping //allfilms
+    public ResponseEntity<List<Film>> getAllFilms() {
+
+        return filmService.getAllFilms();
+    }
+
+    @GetMapping("/{filmId}")
+    public ResponseEntity<Film> getFilm(@PathVariable long filmId) {
+
+        return filmService.getFilm(filmId);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> putLike(@PathVariable long id, @PathVariable long userId) {
+
+        return filmService.putLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<Film> removeLike(@PathVariable long id, @PathVariable long userId) {
+
+        return filmService.removeLike(id, userId);
+    }
+
+    @GetMapping("/popular") //?count={count}
+    public ResponseEntity<List<Film>> getTopFilms(@RequestParam(required = false) Integer count) {
+        if(count == null || count == 0 || count < 0) {
+            count = 10;
+        }
+        return filmService.getTopFilms(count);
     }
 }

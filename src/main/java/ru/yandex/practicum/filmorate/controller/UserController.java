@@ -1,58 +1,73 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.datastorage.UserStorage;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private UserStorage userStorage = new UserStorage();
-    private int userIdGenerator = 0;
-    private Logger userControllerLogger = Logger.getLogger("userControllerLogger");
-    @PostMapping() //newuser
-    public User createNewUser(@RequestBody User user) {
-        if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@") ||
-                user.getLogin().isBlank() ||
-                user.getLogin().contains(" ") || user.getBirthday().isAfter(LocalDate.now())) {
-            userControllerLogger.log(Level.WARNING, "ValidationException /newuser");
-            throw new ValidationException("Ошибка валидации /user/newuser");
-        } else {
-            if (user.getName() == null || user.getName().isBlank()) {
-                user.setName(user.getLogin());
-            }
-            userStorage.addUser(userIdGenerator, user);
-            userIdGenerator++;
-            userControllerLogger.log(Level.INFO, "user has been created! /newuser");
-        }
-        return user;
+    private UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @PutMapping() //updateuser
-    public User updateUser(@RequestBody User user) {
-        if (userStorage.containsUser(user.getId())) {
-            userStorage.addUser(user.getId(), user);
-            userControllerLogger.log(Level.INFO, "user has been updated! /updateuser");
-            return user;
-        } else {
-            Logger.getLogger("logger").log(Level.WARNING, "ValidationException /updateuser");
-            throw new ValidationException("Ошибка валидации user/updateuser");
-        }
+    @PostMapping //newuser
+    public ResponseEntity<User> createNewUser(@RequestBody User user) {
+
+        userService.newUser(user);
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping() //allusers
-    @ResponseBody
+    @PutMapping //updateuser
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+
+        userService.updateUser(user);
+
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping //allusers
     public ResponseEntity getAllUsers() {
-        userControllerLogger.log(Level.INFO, " /allusers");
-        return new ResponseEntity(userStorage.getAllUsers().values(), HttpStatus.OK);
+        return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}") //finduser
+    public ResponseEntity<User> getUser(@PathVariable long userId) {
+        return userService.getUser(userId);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<User> addFriend(@PathVariable long id, @PathVariable long friendId) {
+
+       return userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping ("/{id}/friends/{friendId}")
+    public ResponseEntity<User> deleteFriend(@PathVariable long id, @PathVariable long friendId) {
+
+       return userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public ResponseEntity<List<User>> getAllFriendsOfUser(@PathVariable long id) {
+
+       return userService.getAllFriendsOfUser(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public ResponseEntity<List<User>> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+
+       return userService.findCommonFriends(id, otherId);
     }
 }
