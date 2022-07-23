@@ -17,7 +17,12 @@ public class User {
     private String name;
     @JsonFormat(pattern = "uuuu-MM-dd", shape = JsonFormat.Shape.STRING)
     private String birthday;
-     private Set<Long> listOfFriends = new HashSet<>();
+    private Set<Long> listOfFriends = new HashSet<>();
+
+
+     public void setBirthdayAsString (String date) {
+         birthday = date;
+     }
 
     public void setBirthday(LocalDate localDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);

@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.datastorage.interfaces.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -16,7 +17,6 @@ public class InMemoryUserStorage implements UserStorage {
     @PostMapping
     public void addUser (long userId, User user) {
         userStorage.put(userId, user);
-
     }
 
     public boolean containsUser(long userId) {
@@ -24,8 +24,13 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
 
-    public Map<Long, User> getAllUsers() {
-        return userStorage;
+    public List<User> getAllUsers() {
+        return (List<User>) userStorage.values();
     }
+
+    public User getUser(long id) {
+        return userStorage.get(id);
+    }
+
 
 }
