@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ComponentScan
 public class UserControllerTest {
 
-    @Autowired
+   /* @Autowired
     private MockMvc mvc;
     private Gson json = new Gson();
 
@@ -127,5 +127,5 @@ public class UserControllerTest {
         this.mvc.perform(post("/users") //newuser
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userAsJson)).andExpect(status().isOk());
-    }
+    }*/
 }

@@ -15,7 +15,7 @@ import java.util.TreeSet;
 
 @Data
 public class Film {
-    private long id = 1;
+    private long id;
     private String name;
     private String description;
     @JsonFormat(pattern = "uuuu-MM-dd", shape = JsonFormat.Shape.STRING)
@@ -65,4 +65,7 @@ public class Film {
         rate = personsLikedFilm.size();
     }
 
+    public String getReleaseDateAsString() {
+        return releaseDate;
+    }
 }

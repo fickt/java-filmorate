@@ -23,9 +23,7 @@ public class UserController {
     @PostMapping //newuser
     public ResponseEntity<User> createNewUser(@RequestBody User user) {
 
-        userService.newUser(user);
-
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        return new ResponseEntity<>(userService.addUser(user), HttpStatus.OK);
     }
 
     @PutMapping //updateuser
@@ -43,30 +41,29 @@ public class UserController {
 
     @GetMapping("/{userId}") //finduser
     public ResponseEntity<User> getUser(@PathVariable long userId) {
-        return userService.getUser(userId);
+        return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
     public ResponseEntity<User> addFriend(@PathVariable long id, @PathVariable long friendId) {
 
-       return userService.addFriend(id, friendId);
+       return new ResponseEntity<>(userService.addFriend(id, friendId), HttpStatus.OK);
     }
 
     @DeleteMapping ("/{id}/friends/{friendId}")
     public ResponseEntity<User> deleteFriend(@PathVariable long id, @PathVariable long friendId) {
-
-       return userService.deleteFriend(id, friendId);
+       return new ResponseEntity<>( userService.deleteFriend(id, friendId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/friends")
     public ResponseEntity<List<User>> getAllFriendsOfUser(@PathVariable long id) {
 
-       return userService.getAllFriendsOfUser(id);
+       return new ResponseEntity<>(userService.getAllFriendsOfUser(id),HttpStatus.OK);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public ResponseEntity<List<User>> getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
 
-       return userService.findCommonFriends(id, otherId);
+       return new ResponseEntity<>(userService.findCommonFriends(id, otherId),HttpStatus.OK);
     }
 }

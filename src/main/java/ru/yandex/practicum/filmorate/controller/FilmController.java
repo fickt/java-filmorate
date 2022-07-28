@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -22,8 +23,7 @@ public class FilmController {
 
     @PostMapping //add
     public ResponseEntity<Film> addFilm(@RequestBody Film film) {
-
-        return filmService.addFilm(film);
+        return new ResponseEntity<>(filmService.addFilm(film), HttpStatus.OK);
     }
 
     @PutMapping //update

@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ComponentScan
 public class FilmControllerTest {
 
-    @Autowired
+/*    @Autowired
     private MockMvc mvc;
 
     private Gson json = new Gson();
@@ -106,5 +106,5 @@ public class FilmControllerTest {
                 .content(json.toJson(film))).andReturn().getResponse().getStatus();
 
         assertEquals(200, responseStatus);
-    }
+    }*/
 }
