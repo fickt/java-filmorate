@@ -12,12 +12,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @Service
 public class FilmService {
@@ -55,33 +52,6 @@ public class FilmService {
                 filmServiceLogger.log(Level.WARNING, "NotFoundException /film/update");
                 throw new NotFoundException("Film with" + film.getId() + "ID hasn't been found! /film/update");
             }
-         // если реализация FilmDbStorage
-
-            /*if (filmStorage.containsFilm(film.getId())) { // TODO убрать в DBSTORAGE
-                ((FilmDbStorage) filmStorage).getJdbcTemplate().update("UPDATE FILM_TABLE SET NAME=?, DESCRIPTION = ?," +
-                                "DURATION =?, RELEASE_DATE = ?, RATING_ID = ? WHERE ID = ?",
-                        film.getName(),
-                        film.getDescription(),
-                        film.getDuration(),
-                        film.getReleaseDate(),
-                        film.getMpa().getId(),
-                        film.getId());
-                ((FilmDbStorage) filmStorage).getJdbcTemplate()
-                        .update("DELETE  FROM GENRE_FILM_TABLE WHERE FILM_ID=? ", film.getId());
-                for (Genre genre : film.getGenres()) {
-                    try {
-                        ((FilmDbStorage) filmStorage).getJdbcTemplate()
-                                .update("INSERT INTO GENRE_FILM_TABLE (FILM_ID, GENRE_ID)  VALUES (?,?)", film.getId(), genre.getId());
-                    } catch (DataIntegrityViolationException e) {
-                        continue;
-                    }
-
-                }
-                return new ResponseEntity<>(filmStorage.getFilm(film.getId()), HttpStatus.OK);
-            } else {
-                filmServiceLogger.log(Level.WARNING, "NotFoundException /film/update");
-                throw new NotFoundException("Film with" + film.getId() + "ID hasn't been found! /film/update");
-            }*/
         }
 
     public ResponseEntity<List<Film>> getAllFilms() {

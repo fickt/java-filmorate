@@ -17,7 +17,7 @@ public class InMemoryUserStorage implements UserStorage {
     private long userIdGenerator = 1;
 
     @Override
-    public User addUser(User user) { //TODO исправить
+    public User addUser(User user) {
         user.setId(userIdGenerator);
         userStorage.put(userIdGenerator, user);
         userIdGenerator++;
