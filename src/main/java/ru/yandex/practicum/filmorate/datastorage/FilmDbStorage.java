@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,6 +54,9 @@ public class FilmDbStorage implements FilmStorage {
 
     private static final String SQL_DELETE_LIKE = "DELETE FROM LIKE_USER_TABLE WHERE FILM_ID=? AND " +
             "USER_ID=?";
+
+    private static final String SQL_GET_ALL_FILMS_ORDERED_BY_RATE = "SELECT * FROM film_table LEFT JOIN RATING_TABLE " +
+            "ON FILM_TABLE.RATING_ID = RATING_TABLE.RATING_ID_2 ORDER BY RATE DESC";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -100,7 +104,7 @@ public class FilmDbStorage implements FilmStorage {
 
      List<Film> listOfFilms = new ArrayList<>();
 
-        for (Map<String, Object> map : films) { //не получится применить mapsToList, немного другая логика
+        for (Map<String, Object> map : films) {
             System.out.println(map.keySet());
             System.out.println(map.values());
             Film film = new Film();
@@ -117,7 +121,7 @@ public class FilmDbStorage implements FilmStorage {
             film.setDurationAsLong((Long)map.get("DURATION"));
             film.setRate((Integer)map.get("RATE"));
 
-              List<Map<String, Object>> genresOfFilm = jdbcTemplate.queryForList(SQL_GET_GENRES_OF_FILM, map.get("ID"));  //<--- вот из-за этого
+              List<Map<String, Object>> genresOfFilm = jdbcTemplate.queryForList(SQL_GET_GENRES_OF_FILM, map.get("ID"));
 
             for (Map<String, Object> genreMap : genresOfFilm) {
                 System.out.println(genreMap.keySet());
@@ -217,7 +221,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     public List<Film> getTopFilms(Integer count) {
-        List<Map<String, Object>> films = jdbcTemplate.queryForList(SQL_GET_ALL_FILMS + " ORDER BY RATE DESC");
+        List<Map<String, Object>> films = jdbcTemplate.queryForList(SQL_GET_ALL_FILMS_ORDERED_BY_RATE);
 
         List<Film> listOfFilms = new ArrayList<>();
 
@@ -238,7 +242,7 @@ public class FilmDbStorage implements FilmStorage {
             film.setDurationAsLong((Long)map.get("DURATION"));
             film.setRate((Integer)map.get("RATE"));
 
-            List<Map<String, Object>> genresOfFilm = jdbcTemplate.queryForList(SQL_GET_GENRES_OF_FILM, map.get("ID"));  //<--- вот из-за этого
+            List<Map<String, Object>> genresOfFilm = jdbcTemplate.queryForList(SQL_GET_GENRES_OF_FILM, map.get("ID"));
 
             for (Map<String, Object> genreMap : genresOfFilm) {
                 System.out.println(genreMap.keySet());
@@ -253,6 +257,7 @@ public class FilmDbStorage implements FilmStorage {
             listOfFilms.add(film);
         }
 
+        Collections.reverse(listOfFilms);
         return listOfFilms
                 .stream()
                 .limit(count)

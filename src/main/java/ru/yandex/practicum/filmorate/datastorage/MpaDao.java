@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.datastorage.rowmappers.MpaRowMapper;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 @Repository
 public class MpaDao {
 
+    private static final String SQL_GET_MPA = "SELECT * FROM RATING_TABLE WHERE RATING_ID_2 = ? ";
+    private static final String SQL_GET_ALL_MPA = "SELECT * FROM RATING_TABLE";
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -24,7 +27,7 @@ public class MpaDao {
     }
 
     public ResponseEntity<List<Mpa>> getAllMpa() {
-        List<Map<String, Object>> listOfMapsOfMpa = jdbcTemplate.queryForList("SELECT * FROM RATING_TABLE");
+        List<Map<String, Object>> listOfMapsOfMpa = jdbcTemplate.queryForList(SQL_GET_ALL_MPA);
 
         List<Mpa> listOfMpa = new ArrayList<>();
 
@@ -35,17 +38,16 @@ public class MpaDao {
 
             listOfMpa.add(mpa);
         }
-        listOfMpa = listOfMpa.stream().sorted(Comparator.comparing(Mpa::getId)).collect(Collectors.toList());
+        listOfMpa = listOfMpa
+                .stream()
+                .sorted(Comparator.comparing(Mpa::getId))
+                .collect(Collectors.toList());
         return new ResponseEntity<>(listOfMpa, HttpStatus.OK);
 
     }
 
     public ResponseEntity<Mpa> getMpa(int id) {
-        Map<String, Object> mpaMap = jdbcTemplate.queryForMap("SELECT * FROM RATING_TABLE WHERE RATING_ID_2 = ? ", id);
-        Mpa mpa = new Mpa();
-        mpa.setName((String)mpaMap.get("RATING_NAME"));
-        mpa.setId((Integer) mpaMap.get("RATING_ID_2"));
-
+        Mpa mpa = jdbcTemplate.queryForObject(SQL_GET_MPA, new Object[]{id}, new MpaRowMapper());
         return new ResponseEntity<>(mpa, HttpStatus.OK);
     }
 }
