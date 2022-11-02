@@ -10,6 +10,7 @@ import java.time.format.ResolverStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 @Data
@@ -22,12 +23,22 @@ public class Film {
     @JsonFormat(pattern = "MINUTES", shape = JsonFormat.Shape.NUMBER)
     private long duration;
     private Set<Long> personsLikedFilm = new HashSet<>();
+    private Set<Genre> genres = new TreeSet<>();
+    private Mpa mpa = new Mpa();
     private int rate = 0;
 
 
     public void setReleaseDate(LocalDate localDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT);
         this.releaseDate = formatter.format(localDate);
+    }
+
+    public void setReleaseDateAsString(String localDate) { //only for DATABASE
+        this.releaseDate = localDate;
+    }
+
+    public void setDurationAsLong(long duration) {   //only for DATABASE
+        this.duration = duration;
     }
 
     public LocalDate getReleaseDate() {
@@ -37,11 +48,11 @@ public class Film {
     }
 
     public void setDuration(Duration duration) {   // helps to cope with serialization problems
-       this.duration = duration.toMinutes();
+        this.duration = duration.toMinutes();
     }
 
 
-        public long getDuration() {  // helps to cope with serialization problems
+    public long getDuration() {  // helps to cope with serialization problems
         return this.duration;
     }
 
@@ -52,5 +63,9 @@ public class Film {
 
     public void updateAmountOfLikes() {
         rate = personsLikedFilm.size();
+    }
+
+    public String getReleaseDateAsString() {
+        return releaseDate;
     }
 }

@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate;
 
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,6 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WebMvcTest(FilmController.class)
 @ComponentScan
+
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmControllerTest {
 
     @Autowired
@@ -34,9 +37,9 @@ public class FilmControllerTest {
     @Test
     void shouldReturnStatus400CreatingFilmWithMissingName() throws Exception {
 
-       Film film = new Film();
+        Film film = new Film();
         film.setName("");
-        film.setReleaseDate(LocalDate.of(2002, 12,3));
+        film.setReleaseDate(LocalDate.of(2002, 12, 3));
         film.setDuration(Duration.of(100, ChronoUnit.MINUTES));
         film.setDescription("description of film");
 

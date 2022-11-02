@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,24 +12,22 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
+
 
 @Service
 public class UserService {
 
     private UserStorage userStorage;
     private Logger userServiceLogger = Logger.getLogger("userServiceLogger");
-    private long userIdGenerator = 1;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("UserDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 
-    public User newUser(User user) {
+    public User addUser(User user) {
         if (user.getEmail() == null || user.getEmail().isBlank() || !user.getEmail().contains("@") ||
                 user.getLogin().isBlank() ||
                 user.getLogin().contains(" ") || user.getBirthday().isAfter(LocalDate.now())) {
@@ -39,100 +38,78 @@ public class UserService {
             if (user.getName() == null || user.getName().isBlank()) {
                 user.setName(user.getLogin());
             }
-
-            user.setId(userIdGenerator);
-            userStorage.addUser(userIdGenerator, user);
-            userIdGenerator++;
             userServiceLogger.log(Level.INFO, "user has been created! /newuser");
         }
-        return user;
+        return userStorage.addUser(user);
     }
 
     public User updateUser(User user) {
-
         if (userStorage.containsUser(user.getId())) {
-            userStorage.addUser(user.getId(), user);
+            userStorage.updateUser(user);
             userServiceLogger.log(Level.INFO, "user has been updated! /updateuser");
             return user;
         } else {
             Logger.getLogger("logger").log(Level.WARNING, "ValidationException /updateuser " + user.getId());
-            throw new NotFoundException("Ошибка валидации user/updateuser");
+            throw new NotFoundException("Ошибка валидации user /updateuser");
         }
-
     }
 
     public java.util.Collection<User> getAllUsers() {
         userServiceLogger.log(Level.INFO, " /allusers");
-        return userStorage.getAllUsers().values();
+        return userStorage.getAllUsers();
     }
 
-    public ResponseEntity<User> getUser(long userId) {
+    public User getUser(long userId) {
         userServiceLogger.log(Level.INFO, "/finduser");
-
-        if (userStorage.getAllUsers().containsKey(userId)) {
+        if (userStorage.containsUser(userId)) {
             userServiceLogger.log(Level.INFO, "successfully /finduser");
-            return new ResponseEntity<>(userStorage.getAllUsers().get(userId), HttpStatus.OK);
+           return userStorage.getUser(userId);
         } else {
             userServiceLogger.log(Level.WARNING, "User with " + userId + " ID hasn't been found! /finduser ");
             throw new NotFoundException("User with given ID hasn't been found!");
         }
-
     }
 
-   public ResponseEntity<User> addFriend(long id, long friendId) {
-
-
-       if (userStorage.containsUser(id) && userStorage.containsUser(friendId)) {
-           userStorage.getAllUsers().get(id).getListOfFriends().add(friendId);
-           userStorage.getAllUsers().get(friendId).getListOfFriends().add(id);
-           userServiceLogger.log(Level.INFO, "successfully /friends");
-           return new ResponseEntity<>(userStorage.getAllUsers().get(id), HttpStatus.OK);
-       } else {
-           userServiceLogger.log(Level.WARNING, "User with given ID hasn't been found! /friends");
-           throw new NotFoundException("User/users with given ID has/haven't been found!");
-       }
+    public User addFriend(long userId, long friendId) {
+        if (userStorage.containsUser(userId) && userStorage.containsUser(friendId)) {
+            userStorage.addFriend(userId, friendId);
+            userServiceLogger.log(Level.INFO, "successfully /friends");
+            return userStorage.getUser(userId);
+        } else {
+            userServiceLogger.log(Level.WARNING, "User with given ID hasn't been found! /friends");
+            throw new NotFoundException("User/users with given ID has/haven't been found!");
+        }
     }
 
-    public ResponseEntity<User> deleteFriend(long id, long friendId) {
-
-        if (userStorage.containsUser(id) && userStorage.containsUser(friendId)) {
-            userStorage.getAllUsers().get(id).getListOfFriends().remove(friendId);
-            userStorage.getAllUsers().get(friendId).getListOfFriends().remove(id);
+    public User deleteFriend(long userId, long friendId) {
+        if (userStorage.containsUser(userId) && userStorage.containsUser(friendId)) {
+            userStorage.deleteFriend(userId, friendId);
             userServiceLogger.log(Level.INFO, "successfully /friends DELETE");
-            return new ResponseEntity<>(userStorage.getAllUsers().get(id), HttpStatus.OK);
+            return userStorage.getUser(userId);
         } else {
             userServiceLogger.log(Level.WARNING, "User with given ID hasn't been found! /friends DELETE");
             throw new NotFoundException("User/users with given ID has/haven't been found!");
         }
     }
 
-    public ResponseEntity<List<User>> getAllFriendsOfUser(long id) {
-        if (userStorage.containsUser(id)) {
+    public List<User> getAllFriendsOfUser(long userId) {
+        if (userStorage.containsUser(userId)) {
             userServiceLogger.log(Level.INFO, "successfully /allfriends");
-            Set<Long> userFriends = userStorage.getAllUsers().get(id).getListOfFriends();
-            List<User> listOfUserFriends = userStorage.getAllUsers().values().stream()
-                    .filter(o -> userFriends.contains(o.getId()))
-                    .collect(Collectors.toList());
-            return new ResponseEntity(listOfUserFriends, HttpStatus.OK);
+            return userStorage.getAllFriendsOfUser(userId);
         } else {
             userServiceLogger.log(Level.INFO, "User with given ID hasn't been found! /allfriends");
             throw new NotFoundException("User/users with given ID has/haven't been found!");
         }
     }
 
-    public ResponseEntity<List<User>> findCommonFriends(long id, long otherId) {
-
-        if (userStorage.containsUser(id) && userStorage.containsUser(otherId)) {
+    public List<User> findCommonFriends(long userId, long anotherId) {
+        if (userStorage.containsUser(userId) && userStorage.containsUser(anotherId)) {
             userServiceLogger.log(Level.INFO, "successfully /friends/common");
-            Set<Long> listOfFriends = userStorage.getAllUsers().get(id).getListOfFriends();
-            Set<Long> listOfFriends1 =  userStorage.getAllUsers().get(otherId).getListOfFriends();
-            Set<Long> commonFriends = listOfFriends.stream().filter(listOfFriends1::contains).collect(Collectors.toSet());
-            List<User> listOfCommonFriends = userStorage.getAllUsers().values().stream()
-                    .filter(o -> commonFriends.contains(o.getId())).collect(Collectors.toList());
-            return new ResponseEntity<>(listOfCommonFriends, HttpStatus.OK);
+            return userStorage.findCommonFriends(userId, anotherId);
         } else {
             userServiceLogger.log(Level.INFO, "User with given ID hasn't been found! /friends/common");
             throw new NotFoundException("User/users with given ID has/haven't been found!");
         }
     }
 }
+
