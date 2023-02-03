@@ -1,3 +1,6 @@
 # java-filmorate
 
-Template repository for Filmorate project.
+Технологический стек: Java Core, Spring Boot, H2, Hibernate, Docker, Maven, JUnit, Mockito
+
+Описание проекта:
+Приложение, в котором пользователи могут обмениваться вещами, а так же их резервировать, оставлять запросы и комментарии.
